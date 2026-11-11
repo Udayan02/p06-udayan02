@@ -142,21 +142,10 @@ _round_corner_apply(PyObject *self, PyObject *args)
             float aa = 1.f - ((idx / (float)pixel_count_x) * aa_amount);
 
             if (transparent == 1) {
-                ptr[top_left + r_idx] = (color_top_left[r_idx] * (1.f - aa));
-                ptr[top_left + g_idx] = (color_top_left[g_idx] * (1.f - aa));
-                ptr[top_left + b_idx] = (color_top_left[b_idx] * (1.f - aa));
+                unsigned char alpha = (unsigned char)(aa * 255.f);
 
-                ptr[bottom_left + r_idx] = (color_bottom_left[r_idx] * (1.f - aa));
-                ptr[bottom_left + g_idx] = (color_bottom_left[g_idx] * (1.f - aa));
-                ptr[bottom_left + b_idx] = (color_bottom_left[b_idx] * (1.f - aa));
-
-                ptr[top_right + r_idx] = (color_top_right[r_idx] * (1.f - aa));
-                ptr[top_right + g_idx] = (color_top_right[g_idx] * (1.f - aa));
-                ptr[top_right + b_idx] = (color_top_right[b_idx] * (1.f - aa));
-
-                ptr[bottom_right + r_idx] = (color_bottom_right[r_idx] * (1.f - aa));
-                ptr[bottom_right + g_idx] = (color_bottom_right[g_idx] * (1.f - aa));
-                ptr[bottom_right + b_idx] = (color_bottom_right[b_idx] * (1.f - aa));
+                ptr[top_left + a_idx] = ptr[bottom_left + a_idx] = alpha;
+                ptr[top_right + a_idx] = ptr[bottom_right + a_idx] = alpha;
             } else {
                 ptr[top_left + r_idx] = (color_top_left[r_idx] * (1.f - aa)) + (r * (aa));
                 ptr[top_left + g_idx] = (color_top_left[g_idx] * (1.f - aa)) + (g * (aa));
@@ -227,21 +216,10 @@ _round_corner_apply(PyObject *self, PyObject *args)
             float aa = 1.f - ((idx / (float)pixel_count_y) * aa_amount);
 
             if (transparent == 1) {
-                ptr[top_left + r_idx] = (color_top_left[r_idx] * (1.f - aa));
-                ptr[top_left + g_idx] = (color_top_left[g_idx] * (1.f - aa));
-                ptr[top_left + b_idx] = (color_top_left[b_idx] * (1.f - aa));
+                unsigned char alpha = (unsigned char)(aa * 255.f);
 
-                ptr[bottom_left + r_idx] = (color_bottom_left[r_idx] * (1.f - aa));
-                ptr[bottom_left + g_idx] = (color_bottom_left[g_idx] * (1.f - aa));
-                ptr[bottom_left + b_idx] = (color_bottom_left[b_idx] * (1.f - aa));
-
-                ptr[top_right + r_idx] = (color_top_right[r_idx] * (1.f - aa));
-                ptr[top_right + g_idx] = (color_top_right[g_idx] * (1.f - aa));
-                ptr[top_right + b_idx] = (color_top_right[b_idx] * (1.f - aa));
-
-                ptr[bottom_right + r_idx] = (color_bottom_right[r_idx] * (1.f - aa));
-                ptr[bottom_right + g_idx] = (color_bottom_right[g_idx] * (1.f - aa));
-                ptr[bottom_right + b_idx] = (color_bottom_right[b_idx] * (1.f - aa));
+                ptr[top_left + a_idx] = ptr[bottom_left + a_idx] = alpha;
+                ptr[top_right + a_idx] = ptr[bottom_right + a_idx] = alpha;
             } else {
                 ptr[top_left + r_idx] = (color_top_left[r_idx] * (1.f - aa)) + (r * (aa));
                 ptr[top_left + g_idx] = (color_top_left[g_idx] * (1.f - aa)) + (g * (aa));
