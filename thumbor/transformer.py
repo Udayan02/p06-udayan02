@@ -298,6 +298,14 @@ class Transformer:
             )
             crop_height = source_height
 
+        # A crop side of zero is never meaningful. For a target ratio far
+        # from the source ratio the computed side rounds down to zero and
+        # the image would be cropped to an empty box, resizing to an
+        # every-pixel-transparent result (or raising when alpha is
+        # inspected). Keep at least one pixel per side to resize.
+        crop_width = max(1, crop_width)
+        crop_height = max(1, crop_height)
+
         crop_left = int(
             round(
                 min(
@@ -386,19 +394,29 @@ class Transformer:
         ):
             return
 
+        # A proportional target side can round down to zero for a source
+        # whose aspect ratio is far from the target's. Dividing by it (the
+        # ratio comparison below) raises ZeroDivisionError, and using it as
+        # a resize side raises from the engine. Target sides below one pixel
+        # are not meaningful, so clamp them here.
+        target_width = max(1, self.target_width)
+        target_height = max(1, self.target_height)
+
         # add 1e-5 to get .5 rounding up in Python3 as it was in Python2
         if (
-            source_width / self.target_width * sign
-            >= source_height / self.target_height * sign
+            source_width / target_width * sign
+            >= source_height / target_height * sign
         ):
-            resize_height = round(
-                source_height * self.target_width / source_width + 1e-5
+            resize_height = max(
+                1,
+                round(source_height * target_width / source_width + 1e-5),
             )
-            resize_width = self.target_width
+            resize_width = target_width
         else:
-            resize_height = self.target_height
-            resize_width = round(
-                source_width * self.target_height / source_height + 1e-5
+            resize_height = target_height
+            resize_width = max(
+                1,
+                round(source_width * target_height / source_height + 1e-5),
             )
 
         # ensure that filter should work on the real image size
