@@ -278,6 +278,20 @@ class Engine(BaseEngine):
                 )
                 self.image = self.image.quantize(method=quantize_method)
 
+                # quantize() folds the palette alpha into the P-mode
+                # palette but does not record which entry is transparent.
+                # PNG can encode the palette alpha directly, but the GIF
+                # writer receives the already indexed image and does not
+                # infer the single transparent index, so a resized
+                # palette GIF would come back fully opaque. Restore the
+                # index from the fully transparent palette entry.
+                palette = self.image.getpalette("RGBA")
+                if palette is not None:
+                    for index in range(len(palette) // 4):
+                        if palette[index * 4 + 3] == 0:
+                            self.image.info["transparency"] = index
+                            break
+
         ext = requested_extension or self.get_default_extension()
 
         if ext in (".heic", ".heif") and not HAVE_HEIF:
